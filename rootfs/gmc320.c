@@ -108,7 +108,7 @@ void gmc_close(int device) {
 //}
 
 // Return:  GMC-500+ returns 32-bit unsigned integer.
-uint32_t gmc_get_cpm(int device) {
+uint32_t gmc_get_cpm32(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
@@ -242,7 +242,7 @@ int main(int argc, char *argv[]) {
 
 		//int cpm = gmc_get_cpm(serial_port);
 		//printf(" \"cpm\" : %i,",cpm);
-		uint32_t cpm = gmc_get_cpm(serial_port);
+		uint32_t cpm = gmc_get_cpm32(serial_port);
 		printf(" \"cpm\" : %"PRIu32",",cpm);
 
 		float temp =gmc_get_temperature(serial_port);
