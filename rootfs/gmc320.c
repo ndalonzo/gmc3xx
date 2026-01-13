@@ -108,7 +108,7 @@ void gmc_close(int device) {
 //}
 
 // Return:  GMC-500+ returns 32-bit unsigned integer.
-uint32_t gmc_get_cpm3(int device) {
+uint32_t gmc_get_cpm(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
