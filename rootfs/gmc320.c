@@ -104,7 +104,8 @@ int gmc_get_cpm(int device) {
 	else
 		printf("write error");
 
-	printf("GetCpm buf is: %s\n", buf);
+	printf("GetCpm buf0 is: %c\n", buf[0]);
+	printf("GetCpm buf1 is: %c\n", buf[1]);
 	
 	return buf[0] * 256 + buf[1];
 }
