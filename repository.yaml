@@ -1,3 +1,3 @@
-name: 'GMC Radation Home Assistant add-on'
-url: 'https://github.com/gi1mic/gmc320'
-maintainer: 'GI1MIC'
+name: 'HASS GMC3xx Monitor add-on'
+url: 'https://github.com/ndalonzo/gmc3xx'
+maintainer: 'ndalonzo'
