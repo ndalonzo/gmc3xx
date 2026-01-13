@@ -258,10 +258,10 @@ int main(int argc, char *argv[]) {
 		//int cpm = gmc_get_cpm(serial_port);
 		//printf(" \"cpm\" : %i,",cpm);
 		uint32_t cpm32 = gmc_get_cpm32(serial_port);
-		printf(" \"cpm\" : %"PRIu32",",cpm32);
+		printf(" \"cpma\" : %"PRIu32",",cpm32);
 
 		uint32_t cpm32b = gmc_get_cpm32b(serial_port);
-		printf(" \"cpm\" : %"PRIu32",",cpm32b);
+		printf(" \"cpmb\" : %"PRIu32",",cpm32b);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
