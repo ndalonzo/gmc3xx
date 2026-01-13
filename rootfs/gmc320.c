@@ -124,6 +124,53 @@ int gmc_get_cpm(int device) {
       (uint32_t)buf[3];
 }
 
+int gmc_get_cpm2(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[4] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 4);
+	else
+		printf("write error");
+
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[3] << 24 |
+      (uint32_t)buf[2] << 16 |
+      (uint32_t)buf[1] << 8  |
+      (uint32_t)buf[0];
+}
+
+uint32_t gmc_get_cpm3(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[4] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 4);
+	else
+		printf("write error");
+
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[0] << 24 |
+      (uint32_t)buf[1] << 16 |
+      (uint32_t)buf[2] << 8  |
+      (uint32_t)buf[3];
+}
+
+uint32_t gmc_get_cpm4(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[4] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 4);
+	else
+		printf("write error");
+
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[3] << 24 |
+      (uint32_t)buf[2] << 16 |
+      (uint32_t)buf[1] << 8  |
+      (uint32_t)buf[0];
+}
 
 // Return: Four bytes celsius degree data in hexdecimal: BYTE1,BYTE2,BYTE3,BYTE4
 float gmc_get_temperature(int device) {
@@ -243,6 +290,15 @@ int main(int argc, char *argv[]) {
 
 		int cpm = gmc_get_cpm(serial_port);
 		printf(" \"cpm\" : %i,",cpm);
+
+		int cpm2 = gmc_get_cpm2(serial_port);
+		printf(" \"cpm2\" : %i,",cpm2);
+
+		uint32_t cpm3 = gmc_get_cpm3(serial_port);
+		printf(" \"cpm3\" : %"PRIu32",",cpm3);
+
+		uint32_t cpm4 = gmc_get_cpm4(serial_port);
+		printf(" \"cpm4\" : %"PRIu32",",cpm4);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
