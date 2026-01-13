@@ -5,6 +5,7 @@
 CONFIG_PATH=/data/options.json
 
 PORT="$(bashio::config 'port')"
+BAUDRATE="$(bashio::config 'baudrate')"
 MQTT_SERVER="$(bashio::config 'mqtt_server')"
 MQTT_PORT="$(bashio::config 'mqtt_port')"
 MQTT_USER="$(bashio::config 'mqtt_user')"
@@ -14,7 +15,7 @@ DELAY="$(bashio::config 'repeat')"
 bashio::log.info "Starting gmc3xx"
 
 # Get the device serial number
-SERIAL=$(gmc320 ${PORT} | jq -r .serial)
+SERIAL=$(gmc320 ${PORT} ${BAUDRATE} | jq -r .serial)
 bashio::log.info "Device serial number: ${SERIAL}"
 
 # Send homeassistant MQTT discovery message
@@ -29,7 +30,7 @@ bashio::log.info "Device serial number: ${SERIAL}"
 # Send the readings
 bashio::log.info "Start sending data"
 while true; do
-	DATA=$(gmc320 ${PORT})
+	DATA=$(gmc320 ${PORT} ${BAUDRATE})
 	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}" -m "${DATA}"
 	sleep ${DELAY}
 done
