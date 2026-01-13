@@ -94,18 +94,32 @@ void gmc_close(int device) {
 	close(device);
 }
 
-// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+//// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+//int gmc_get_cpm(int device) {
+//	char cmd[] = "<GETCPM>>";
+//	char buf[2] = { 0 };
+//
+//	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+//		gmc_read(device, buf, 2);
+//	else
+//		printf("write error");
+//
+//	return buf[0] * 256 + buf[1];
+//}
+
+// Return:  GMC-50+ returns 32-bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
 int gmc_get_cpm(int device) {
 	char cmd[] = "<GETCPM>>";
-	char buf[2] = { 0 };
+	char buf[4] = { 0 };
 
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-		gmc_read(device, buf, 2);
+		gmc_read(device, buf, 4);
 	else
 		printf("write error");
 
-	return buf[0] * 256 + buf[1];
+	return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
 }
+
 
 // Return: Four bytes celsius degree data in hexdecimal: BYTE1,BYTE2,BYTE3,BYTE4
 float gmc_get_temperature(int device) {
