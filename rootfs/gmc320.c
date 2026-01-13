@@ -123,6 +123,21 @@ uint32_t gmc_get_cpm32(int device) {
       (uint32_t)buf[3];
 }
 
+// Return:  GMC-500+ returns 32-bit unsigned integer.
+uint32_t gmc_get_cpm32b(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[4] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 4);
+	else
+		printf("write error");
+
+	return (uint32_t)buf[3] << 24 |
+      (uint32_t)buf[2] << 16 |
+      (uint32_t)buf[1] << 8  |
+      (uint32_t)buf[0];
+}
 
 // Return: Four bytes celsius degree data in hexdecimal: BYTE1,BYTE2,BYTE3,BYTE4
 float gmc_get_temperature(int device) {
@@ -242,8 +257,11 @@ int main(int argc, char *argv[]) {
 
 		//int cpm = gmc_get_cpm(serial_port);
 		//printf(" \"cpm\" : %i,",cpm);
-		uint32_t cpm = gmc_get_cpm32(serial_port);
-		printf(" \"cpm\" : %"PRIu32",",cpm);
+		uint32_t cpm32 = gmc_get_cpm32(serial_port);
+		printf(" \"cpm\" : %"PRIu32",",cpm32);
+
+		uint32_t cpm32b = gmc_get_cpm32b(serial_port);
+		printf(" \"cpm\" : %"PRIu32",",cpm32b);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
