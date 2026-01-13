@@ -55,8 +55,6 @@ int gmc_set_heartbeat_off(int device) {
 }
 
 
-
-
 int gmc_open(const char *device, int baud) {
 	int gc_fd = -1;
 	struct termios tio;
@@ -90,22 +88,24 @@ int gmc_open(const char *device, int baud) {
 	return gc_fd;
 }
 
+
 void gmc_close(int device) {
 	close(device);
 }
 
-//// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
-//int gmc_get_cpm(int device) {
-//	char cmd[] = "<GETCPM>>";
-//	char buf[2] = { 0 };
-//
-//	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-//		gmc_read(device, buf, 2);
-//	else
-//		printf("write error");
-//
-//	return buf[0] * 256 + buf[1];
-//}
+
+// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+int gmc_get_cpm16(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[2] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 2);
+	else
+		printf("write error");
+
+	return buf[0] * 256 + buf[1];
+}
 
 // Return:  GMC-500+ returns 32-bit unsigned integer.
 uint32_t gmc_get_cpm32(int device) {
@@ -255,13 +255,14 @@ int main(int argc, char *argv[]) {
 		gmc_get_serial(serial_port, serialNumber);
 		printf(" \"serial\" : \"%s\",",serialNumber);
 
-		//int cpm = gmc_get_cpm(serial_port);
-		//printf(" \"cpm\" : %i,",cpm);
-		uint32_t cpm32 = gmc_get_cpm32(serial_port);
-		printf(" \"cpma\" : %"PRIu32",",cpm32);
+		int cpm16 = gmc_get_cpm16(serial_port);
+		printf(" \"cpm16\" : %i,",cpm16);
+	
+		uint32_t cpm32a = gmc_get_cpm32(serial_port);
+		printf(" \"cpm32a\" : %"PRIu32",",cpm32a);
 
 		uint32_t cpm32b = gmc_get_cpm32b(serial_port);
-		printf(" \"cpmb\" : %"PRIu32",",cpm32b);
+		printf(" \"cpm32b\" : %"PRIu32",",cpm32b);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
