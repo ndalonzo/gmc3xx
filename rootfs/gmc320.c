@@ -117,7 +117,11 @@ int gmc_get_cpm(int device) {
 	else
 		printf("write error");
 
-	return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[0] << 24 |
+      (uint32_t)buf[1] << 16 |
+      (uint32_t)buf[2] << 8  |
+      (uint32_t)buf[3];
 }
 
 
