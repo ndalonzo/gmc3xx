@@ -204,12 +204,12 @@ int setDateTime(int device) {
 
 int main(int argc, char *argv[]) {
 
-	if (argc != 2) {
-		printf("You need to specify the serial device used by the GMC radation monitor i.e. %s /dev/ttyUSB0\n", argv[0]);
+	if (argc != 3) {
+		printf("You need to specify the serial device and baudrate used by the GMC radation monitor i.e. %s /dev/ttyUSB0 115200\n", argv[0]);
 		return 1;
 	}
 //	serial_port = gmc_open("/dev/ttyUSB0", 19200);
-	serial_port = gmc_open(argv[1], 19200);
+	serial_port = gmc_open(argv[1], (int)argv[2]);
 	if (serial_port == -1) {
 		printf("Cannot open specified serial device\n");
 		return 1;
