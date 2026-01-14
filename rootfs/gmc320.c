@@ -214,6 +214,7 @@ float gmc_get_serial(int device, char *serialNum) {
 	char cmd[] = "<GETSERIAL>>";
 	char buf[8] = {0};
 
+	gmc_flush(serial_port);
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd)) {
 		gmc_read(device, buf, 7);
 		sprintf(serialNum,"%0x%0x%0x%0x%0x%0x%0x", (unsigned char)buf[0], (unsigned char)buf[1],(unsigned char)buf[2],(unsigned char)buf[3],(unsigned char)buf[4],(unsigned char)buf[5],(unsigned char)buf[6]);
