@@ -23,7 +23,10 @@ bashio::log.info "Device serial number: ${SERIAL}"
 # Send homeassistant MQTT discovery message
 bashio::log.info "Publishing MQTT config topics"
 mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/" -m ''
-mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m "{\"name\": \"${MODEL} ${SERIAL: -4}\", \"icon\": \"mdi:radioactive\", \"unit_of_measurement\": \"CPM\", \"state_topic\": \"homeassistant/sensor/gmc3xx_${SERIAL}/state\",  \"value_template\": \"{{ value_json.cpm }}\"}"
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}_cpm/" -m ''
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}_cpm/config" -m "{\"name\": \"${MODEL} ${SERIAL: -4} Counts per Minute\", \"icon\": \"mdi:radioactive\", \"unit_of_measurement\": \"CPM\", \"state_topic\": \"homeassistant/sensor/gmc3xx_${SERIAL}/state\",  \"value_template\": \"{{ value_json.cpm }}\"}"
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}_usv/" -m ''
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}_usv/config" -m "{\"name\": \"${MODEL} ${SERIAL: -4} uSv per Hour\", \"icon\": \"mdi:radioactive\", \"unit_of_measurement\": \"μSv/h\", \"state_topic\": \"homeassistant/sensor/gmc3xx_${SERIAL}/state\",  \"value_template\": \"{{ value_json.uSvHr }}\"}"
 
 # Send the readings
 bashio::log.info "Start sending data"
