@@ -55,6 +55,8 @@ int gmc_set_heartbeat_off(int device) {
 }
 
 
+
+
 int gmc_open(const char *device, int baud) {
 	int gc_fd = -1;
 	struct termios tio;
@@ -88,27 +90,25 @@ int gmc_open(const char *device, int baud) {
 	return gc_fd;
 }
 
-
 void gmc_close(int device) {
 	close(device);
 }
 
+//// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+//int gmc_get_cpm(int device) {
+//	char cmd[] = "<GETCPM>>";
+//	char buf[2] = { 0 };
+//
+//	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+//		gmc_read(device, buf, 2);
+//	else
+//		printf("write error");
+//
+//	return buf[0] * 256 + buf[1];
+//}
 
-// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
-int gmc_get_cpm16(int device) {
-	char cmd[] = "<GETCPM>>";
-	char buf[2] = { 0 };
-
-	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-		gmc_read(device, buf, 2);
-	else
-		printf("write error");
-
-	return buf[0] * 256 + buf[1];
-}
-
-// Return:  GMC-500+ returns 32-bit unsigned integer.
-uint32_t gmc_get_cpm32(int device) {
+// Return:  GMC-50+ returns 32-bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+int gmc_get_cpm(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
@@ -117,14 +117,14 @@ uint32_t gmc_get_cpm32(int device) {
 	else
 		printf("write error");
 
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
 	return (uint32_t)buf[0] << 24 |
       (uint32_t)buf[1] << 16 |
       (uint32_t)buf[2] << 8  |
       (uint32_t)buf[3];
 }
 
-// Return:  GMC-500+ returns 32-bit unsigned integer.
-uint32_t gmc_get_cpm32b(int device) {
+int gmc_get_cpm2(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
@@ -133,26 +133,43 @@ uint32_t gmc_get_cpm32b(int device) {
 	else
 		printf("write error");
 
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
 	return (uint32_t)buf[3] << 24 |
       (uint32_t)buf[2] << 16 |
       (uint32_t)buf[1] << 8  |
       (uint32_t)buf[0];
 }
 
-
-//Return:   total 4 bytes ASCII chars from GQ GMC unit. 
-int gmc_get_cpmraw(int device, char *cpmraw) {
+uint32_t gmc_get_cpm3(int device) {
 	char cmd[] = "<GETCPM>>";
-	char buf[6] = {0};
+	char buf[4] = { 0 };
 
-	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd)) {
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
 		gmc_read(device, buf, 4);
-		buf[5] = 0;
-		strncpy(cpmraw, buf, 5);
-//		printf("test:%s", cpmraw);
-		return BOOL_TRUE;
-	}
-	return BOOL_FALSE;
+	else
+		printf("write error");
+
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[0] << 24 |
+      (uint32_t)buf[1] << 16 |
+      (uint32_t)buf[2] << 8  |
+      (uint32_t)buf[3];
+}
+
+uint32_t gmc_get_cpm4(int device) {
+	char cmd[] = "<GETCPM>>";
+	char buf[4] = { 0 };
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
+		gmc_read(device, buf, 4);
+	else
+		printf("write error");
+
+	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
+	return (uint32_t)buf[3] << 24 |
+      (uint32_t)buf[2] << 16 |
+      (uint32_t)buf[1] << 8  |
+      (uint32_t)buf[0];
 }
 
 // Return: Four bytes celsius degree data in hexdecimal: BYTE1,BYTE2,BYTE3,BYTE4
@@ -271,18 +288,17 @@ int main(int argc, char *argv[]) {
 		gmc_get_serial(serial_port, serialNumber);
 		printf(" \"serial\" : \"%s\",",serialNumber);
 
-		int cpm16 = gmc_get_cpm16(serial_port);
-		printf(" \"cpm16\" : %i,",cpm16);
-	
-		uint32_t cpm32a = gmc_get_cpm32(serial_port);
-		printf(" \"cpm32a\" : %"PRIu32",",cpm32a);
+		int cpm = gmc_get_cpm(serial_port);
+		printf(" \"cpm\" : %i,",cpm);
 
-		uint32_t cpm32b = gmc_get_cpm32b(serial_port);
-		printf(" \"cpm32b\" : %"PRIu32",",cpm32b);
+		int cpm2 = gmc_get_cpm2(serial_port);
+		printf(" \"cpm2\" : %i,",cpm2);
 
-		char cpmraw[20];
-		gmc_get_cpmraw(serial_port, cpmraw);
-		printf(" \"cpmraw\" : \"%s\",", cpmraw);
+		uint32_t cpm3 = gmc_get_cpm3(serial_port);
+		printf(" \"cpm3\" : %"PRIu32",",cpm3);
+
+		uint32_t cpm4 = gmc_get_cpm4(serial_port);
+		printf(" \"cpm4\" : %"PRIu32",",cpm4);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
