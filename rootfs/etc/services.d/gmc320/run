@@ -15,6 +15,7 @@ DELAY="$(bashio::config 'repeat')"
 bashio::log.info "Starting gmc3xx service"
 
 # Get the device serial number
+MODEL=$(gmc320 ${PORT} ${BAUDRATE} | jq -r .model)
 SERIAL=$(gmc320 ${PORT} ${BAUDRATE} | jq -r .serial)
 bashio::log.info "Device serial number: ${SERIAL}"
 
@@ -29,7 +30,7 @@ bashio::log.info "Device serial number: ${SERIAL}"
 
 bashio::log.info "Publishing MQTT config topics"
 mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/" -m ''
-mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m "{'name': 'GMC-3xx ${SERIAL}', 'icon': 'mdi:radioactive', 'unit_of_measurement': 'μSv/h', 'state_topic': 'homeassistant/sensor/gmc3xx_${SERIAL}/state',  'value_template': '{{ value_json.cpm }}'}"
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m "{\"name\": \"${MODEL} ${SERIAL}\", \"icon\": \"mdi:radioactive\", \"unit_of_measurement\": \"CPM\", \"state_topic\": \"homeassistant/sensor/gmc3xx_${SERIAL}/state\",  \"value_template\": \"{{ value_json.cpm }}\"}"
 
 
 # Send the readings
