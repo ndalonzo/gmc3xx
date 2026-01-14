@@ -37,7 +37,7 @@ while true; do
 
 
 	bashio::log.info "Publishing new data..."
-	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/"
+	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/" -m ''
 	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m '{"name": "GMC-3xx ${SERIAL}",  "state_topic": "homeassistant/sensor/gmc3xx_${SERIAL}/state"}'
 	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/state" -m '42'
 
