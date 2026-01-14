@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
 
 	// TODO: is this accurate?
 	float uSvHr = cpm32 / 150.00;
-	printf(" \"μSv/h\": %.2f,", uSvHr);
+	printf(" \"uSvHr\": %.2f,", uSvHr);
 
 	float temp = gmc_get_temperature(serial_port);
 	printf(" \"temp\": %.1f,", temp);
