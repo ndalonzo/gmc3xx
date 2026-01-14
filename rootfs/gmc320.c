@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
 	
 	char version[20];
 	gmc_get_version(serial_port, version);
-	printf(" \"version\" : \"%s\",", version);
+	printf(" \"model\" : \"%s\",", version);
 
 	char serialNumber[20];
 	gmc_get_serial(serial_port, serialNumber);
@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
 	uint32_t cpm32 = gmc_get_cpm32(serial_port);
 	printf(" \"cpm\" : %"PRIu32",",cpm32);
 
-	float temp =gmc_get_temperature(serial_port);
+	float temp = gmc_get_temperature(serial_port);
 	printf(" \"temp\" : %.1f,", temp);
 
 	float volt = gmc_get_volt(serial_port)/10;
@@ -251,7 +251,7 @@ int main(int argc, char *argv[]) {
 
 	Gyro_Sensor gyro;
 	gmc_get_gyro(serial_port, &gyro);
-	printf(" \"x\" : %d,\"y\" : %d, \"z\" : %d", gyro.x, gyro.y, gyro.z);
+	printf(" \"gyro_x\" : %d,\"gyro_y\" : %d, \"gyro_z\" : %d", gyro.x, gyro.y, gyro.z);
 
 	printf(" }");
 	printf("\r\n");
