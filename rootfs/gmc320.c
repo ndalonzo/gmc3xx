@@ -139,6 +139,22 @@ uint32_t gmc_get_cpm32b(int device) {
       (uint32_t)buf[0];
 }
 
+
+//Return:   total 4 bytes ASCII chars from GQ GMC unit. 
+int gmc_get_cpmraw(int device, char *cpmraw) {
+	char cmd[] = "<GETCPM>>";
+	char buf[6] = {0};
+
+	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd)) {
+		gmc_read(device, buf, 4);
+		buf[5] = 0;
+		strncpy(cpmraw, buf, 5);
+//		printf("test:%s", cpmraw);
+		return BOOL_TRUE;
+	}
+	return BOOL_FALSE;
+}
+
 // Return: Four bytes celsius degree data in hexdecimal: BYTE1,BYTE2,BYTE3,BYTE4
 float gmc_get_temperature(int device) {
 	char cmd[] = "<GETTEMP>>";
@@ -263,6 +279,10 @@ int main(int argc, char *argv[]) {
 
 		uint32_t cpm32b = gmc_get_cpm32b(serial_port);
 		printf(" \"cpm32b\" : %"PRIu32",",cpm32b);
+
+		char cpmraw[20];
+		gmc_get_cpmraw(serial_port, cpmraw);
+		printf(" \"cpmraw\" : \"%s\",", cpmraw);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
