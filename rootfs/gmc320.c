@@ -144,6 +144,7 @@ uint32_t gmc_get_cpm3(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
+	gmc_flush(serial_port);	//ND 20260114-1041
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
 		gmc_read(device, buf, 4);
 	else
