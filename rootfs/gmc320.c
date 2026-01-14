@@ -240,8 +240,20 @@ int main(int argc, char *argv[]) {
 	gmc_get_serial(serial_port, serialNumber);
 	printf(" \"serial\": \"%s\",",serialNumber);
 
+    time_t rawtime;
+    struct tm *timeinfo;
+    char dateTimeBuffer[80]; // Buffer to hold the formatted string
+    time(&rawtime);
+    timeinfo = localtime(&rawtime); // Convert to local time structure
+    strftime(dateTimeBuffer, sizeof(dateTimeBuffer), "%Y-%m-%d %H:%M:%S", timeinfo);  // Format the time as "YYYY-MM-DD HH:MM:SS"
+    printf(" \"time_of_reading\": \"%s\",", dateTimeBuffer);
+
 	uint32_t cpm32 = gmc_get_cpm32(serial_port);
 	printf(" \"cpm\": %"PRIu32",",cpm32);
+
+	// TODO: is this accurate?
+	float uSvHr = cpm32 / 150.00;
+	printf(" \"μSv/h\": %.2f,", uSvHr);
 
 	float temp = gmc_get_temperature(serial_port);
 	printf(" \"temp\": %.1f,", temp);
