@@ -289,16 +289,16 @@ int main(int argc, char *argv[]) {
 		printf(" \"serial\" : \"%s\",",serialNumber);
 
 		int cpm = gmc_get_cpm(serial_port);
-		printf(" \"cpm\" : %i,",cpm);
+		//printf(" \"cpm\" : %i,",cpm);
 
 		int cpm2 = gmc_get_cpm2(serial_port);
-		printf(" \"cpm2\" : %i,",cpm2);
+		//printf(" \"cpm2\" : %i,",cpm2);
 
 		uint32_t cpm3 = gmc_get_cpm3(serial_port);
 		printf(" \"cpm3\" : %"PRIu32",",cpm3);
 
 		uint32_t cpm4 = gmc_get_cpm4(serial_port);
-		printf(" \"cpm4\" : %"PRIu32",",cpm4);
+		//printf(" \"cpm4\" : %"PRIu32",",cpm4);
 
 		float temp =gmc_get_temperature(serial_port);
 		printf(" \"temp\" : %.1f,", temp);
