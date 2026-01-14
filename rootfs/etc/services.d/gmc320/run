@@ -27,19 +27,22 @@ bashio::log.info "Device serial number: ${SERIAL}"
 # 'z': {'name': 'z', 'device_class': 'None', 'unit_of_measurement': 'deg', 'icon': 'None', 'state_class': 'measurement'}, \
 
 
+bashio::log.info "Publishing MQTT config topics"
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/" -m ''
+mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m "{'name': 'GMC-3xx ${SERIAL}', 'icon': 'mdi:radioactive', 'unit_of_measurement': 'μSv/h', 'state_topic': 'homeassistant/sensor/gmc3xx_${SERIAL}/state',  'value_template': '{{ value_json.cpm }}'}"
+
+
 # Send the readings
 bashio::log.info "Start sending data"
 while true; do
-	bashio::log.info "Fetching data from device..."
+	bashio::log.info "Fetching data from device"
 	DATA=$(gmc320 ${PORT} ${BAUDRATE})
-	bashio::log.info "Publishing data..."
+	bashio::log.info "Publishing data"
 	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/zzgmc3xx_${SERIAL}" -m "${DATA}"
 
 
-	bashio::log.info "Publishing new data..."
-	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/" -m ''
-	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/config" -m '{"name": "GMC-3xx ${SERIAL}",  "state_topic": "homeassistant/sensor/gmc3xx_${SERIAL}/state"}'
-	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/state" -m '42'
+	bashio::log.info "Publishing new data"
+	mosquitto_pub -u ${MQTT_USER} -P ${MQTT_PASSWORD} -p ${MQTT_PORT} -h ${MQTT_SERVER} -t "homeassistant/sensor/gmc3xx_${SERIAL}/state" -m "${DATA}"
 
 
 	bashio::log.info "Sleeping"
