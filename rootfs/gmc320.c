@@ -288,7 +288,7 @@ int main(int argc, char *argv[]) {
 		gmc_get_serial(serial_port, serialNumber);
 		printf(" \"serial\" : \"%s\",",serialNumber);
 
-		//int cpm = gmc_get_cpm(serial_port);
+		int cpm = gmc_get_cpm(serial_port);
 		//printf(" \"cpm\" : %i,",cpm);
 
 		//int cpm2 = gmc_get_cpm2(serial_port);
