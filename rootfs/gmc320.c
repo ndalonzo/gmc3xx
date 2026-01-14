@@ -55,8 +55,6 @@ int gmc_set_heartbeat_off(int device) {
 }
 
 
-
-
 int gmc_open(const char *device, int baud) {
 	int gc_fd = -1;
 	struct termios tio;
@@ -90,67 +88,38 @@ int gmc_open(const char *device, int baud) {
 	return gc_fd;
 }
 
+
 void gmc_close(int device) {
 	close(device);
 }
 
-//// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
-//int gmc_get_cpm(int device) {
-//	char cmd[] = "<GETCPM>>";
-//	char buf[2] = { 0 };
-//
-//	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-//		gmc_read(device, buf, 2);
-//	else
-//		printf("write error");
-//
-//	return buf[0] * 256 + buf[1];
-//}
 
-// Return:  GMC-50+ returns 32-bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
+// Return:   A 16 bit unsigned integer is returned. In total 2 bytes data return from GQ GMC unit. The first byte is MSB byte data and second byte is LSB byte data.
 int gmc_get_cpm(int device) {
 	char cmd[] = "<GETCPM>>";
-	char buf[4] = { 0 };
+	char buf[2] = { 0 };
 
+	gmc_flush(serial_port);
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-		gmc_read(device, buf, 4);
+		gmc_read(device, buf, 2);
 	else
 		printf("write error");
 
-	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
-	return (uint32_t)buf[0] << 24 |
-      (uint32_t)buf[1] << 16 |
-      (uint32_t)buf[2] << 8  |
-      (uint32_t)buf[3];
+	return buf[0] * 256 + buf[1];
 }
 
-int gmc_get_cpm2(int device) {
+
+// Return:  A 32 bit unsigned integer is returned from GMC-500+ (and newer devices?).
+uint32_t gmc_get_cpm32(int device) {
 	char cmd[] = "<GETCPM>>";
 	char buf[4] = { 0 };
 
+	gmc_flush(serial_port);
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
 		gmc_read(device, buf, 4);
 	else
 		printf("write error");
 
-	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
-	return (uint32_t)buf[3] << 24 |
-      (uint32_t)buf[2] << 16 |
-      (uint32_t)buf[1] << 8  |
-      (uint32_t)buf[0];
-}
-
-uint32_t gmc_get_cpm3(int device) {
-	char cmd[] = "<GETCPM>>";
-	char buf[4] = { 0 };
-
-	gmc_flush(serial_port);	//ND 20260114-1041
-	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd))
-		gmc_read(device, buf, 4);
-	else
-		printf("write error");
-
-	//return (buf[0] * 16777216) + (buf[1] * 65536) + (buf[2] * 256) + buf[3];
 	return (uint32_t)buf[0] << 24 |
       (uint32_t)buf[1] << 16 |
       (uint32_t)buf[2] << 8  |
@@ -175,6 +144,7 @@ float gmc_get_temperature(int device) {
 	temp = temp * sign;
 	return temp;
 }
+
 
 // Return:   one byte voltage value of battery (X 10V)
 int gmc_get_volt(int device) {
@@ -201,8 +171,6 @@ int gmc_get_gyro(int device, Gyro_Sensor *gyro) {
 
 	if (gmc_write(device, cmd) == (ssize_t) strlen(cmd)) {
 		gmc_read(device, (char *) &gyro->x, 7);
-//		gyro->x = 23;
-//		gyro->y = 45;
 		return BOOL_TRUE;
 	}
 	return BOOL_FALSE;
@@ -223,6 +191,7 @@ float gmc_get_serial(int device, char *serialNum) {
 	return BOOL_FALSE;
 }
 
+
 //Return:   total 14 bytes ASCII chars from GQ GMC unit. It includes 7 bytes hardware model and 7 bytes firmware version
 int gmc_get_version(int device, char *version) {
 	char cmd[] = "<GETVER>>";
@@ -232,12 +201,10 @@ int gmc_get_version(int device, char *version) {
 		gmc_read(device, buf, 14);
 		buf[15] = 0;
 		strncpy(version, buf, 15);
-//		printf("test:%s", version);
 		return BOOL_TRUE;
 	}
 	return BOOL_FALSE;
 }
-
 
 
 // <SETDATETIME[YYMMDDHHMMSS]>>
@@ -246,11 +213,7 @@ int setDateTime(int device) {
 	struct tm tm = *localtime(&t);
 	char cmd[40];
 	sprintf(cmd,"<SETDATETIME%d%02d%02d%02d%02d%02d>>", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-//	printf("%s",cmd);
 	gmc_write(device,cmd);
-//	strcpy(cmd, "<SETTIMEHH\0x09>>");
-//	printf("%s",cmd);
-//	gmc_write(device,cmd);
 }
 
 
@@ -260,44 +223,41 @@ int main(int argc, char *argv[]) {
 		printf("You need to specify the serial device and baudrate used by the GMC radation monitor i.e. %s /dev/ttyUSB0 115200\n", argv[0]);
 		return 1;
 	}
-//	serial_port = gmc_open("/dev/ttyUSB0", 19200);
+
 	serial_port = gmc_open(argv[1], (int)argv[2]);
 	if (serial_port == -1) {
 		printf("Cannot open specified serial device\n");
 		return 1;
 	};
+	
 	printf("{");
-		char version[20];
-		gmc_get_version(serial_port, version);
-		printf(" \"version\" : \"%s\",", version);
+	
+	char version[20];
+	gmc_get_version(serial_port, version);
+	printf(" \"version\" : \"%s\",", version);
 
-		char serialNumber[20];
-		gmc_get_serial(serial_port, serialNumber);
-		printf(" \"serial\" : \"%s\",",serialNumber);
+	char serialNumber[20];
+	gmc_get_serial(serial_port, serialNumber);
+	printf(" \"serial\" : \"%s\",",serialNumber);
 
-		//int cpm = gmc_get_cpm(serial_port);
-		//printf(" \"cpm\" : %i,",cpm);
+	uint32_t cpm32 = gmc_get_cpm32(serial_port);
+	printf(" \"cpm\" : %"PRIu32",",cpm32);
 
-		//int cpm2 = gmc_get_cpm2(serial_port);
-		//printf(" \"cpm2\" : %i,",cpm2);
+	float temp =gmc_get_temperature(serial_port);
+	printf(" \"temp\" : %.1f,", temp);
 
-		uint32_t cpm3 = gmc_get_cpm3(serial_port);
-		printf(" \"cpm3\" : %"PRIu32",",cpm3);
+	float volt = gmc_get_volt(serial_port)/10;
+	printf(" \"volt\" : %0.1f,", volt);
 
-		float temp =gmc_get_temperature(serial_port);
-		printf(" \"temp\" : %.1f,", temp);
+	Gyro_Sensor gyro;
+	gmc_get_gyro(serial_port, &gyro);
+	printf(" \"x\" : %d,\"y\" : %d, \"z\" : %d", gyro.x, gyro.y, gyro.z);
 
-		float volt = gmc_get_volt(serial_port)/10;
-		printf(" \"volt\" : %0.1f,", volt);
-
-		Gyro_Sensor gyro;
-		gmc_get_gyro(serial_port, &gyro);
-		printf(" \"x\" : %d,\"y\" : %d, \"z\" : %d", gyro.x, gyro.y, gyro.z);
-
-		printf(" }");
-		printf("\r\n");
-		setDateTime(serial_port);
+	printf(" }");
+	printf("\r\n");
+	
+	setDateTime(serial_port);
 	gmc_close(serial_port);
 
-  return 0; // success
+	return 0; // success
 };
