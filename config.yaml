@@ -1,6 +1,6 @@
 name: "GMC 3xx Radiation Monitor"
 description: "Radiation Monitor Sensor Interface"
-version: "1.0.4.a1"
+version: "2026.01.14.a"
 slug: "gmc3xx_monitor_nd"
 arch:
   - aarch64
@@ -9,7 +9,7 @@ arch:
   - armv7
   - i386
 options:
-  port: "/dev/ttyUSB0"
+  port: "/dev/ttyUSB1"
   baudrate: 115200
   mqtt_server: "localhost"
   mqtt_port: 1883
