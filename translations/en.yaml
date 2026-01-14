@@ -1,0 +1,21 @@
+configuration:
+  port:
+    name: USB port of the GMC device
+    description: Example: /dev/ttyUSB0  Can be found in HA > Settings > System > Hardware.
+  baudrate:
+    name: USB serial port communication rate
+    description: In Baud - typically 19200 or 115200
+  mqtt_server:
+    name: MQTT Server Address
+    description: Use localhost for MQTT hosted via HA.
+  mqtt_port:
+    name: MQTT Port
+    description: Typically port 1883.
+  mqtt_user:
+    name: MQTT User
+  mqtt_password:
+    name: MQTT Password
+  repeat:
+    name: Update frequency (in seconds)
+    description: How often (in seconds) to check the reading
+    
