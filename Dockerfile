@@ -1,5 +1,6 @@
-ARG BUILD_FROM
+ARG BUILD_FROM=alpine:latest
 FROM $BUILD_FROM
+  
 COPY rootfs/gmc320.c /usr/src/.
 WORKDIR /usr/src
 RUN apk update --no-cache \
