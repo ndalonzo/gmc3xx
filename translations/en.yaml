@@ -1,7 +1,8 @@
 configuration:
   port:
     name: USB port of the GMC device
-    description: Example: /dev/ttyUSB0  Can be found in HA > Settings > System > Hardware.
+    description: >-
+      Example -- /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0 (preferred) or /dev/ttyUSB0 -- Can be found in HA > Settings > System > Hardware.
   baudrate:
     name: USB serial port communication rate
     description: In Baud - typically 19200 or 115200
@@ -18,4 +19,3 @@ configuration:
   repeat:
     name: Update frequency (in seconds)
     description: How often (in seconds) to check the reading
-    
