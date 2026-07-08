@@ -9,7 +9,7 @@ arch:
   - armv7
   - i386
 options:
-  port: "/dev/ttyUSB1"
+  port: "/dev/serial/by-id/usb-1a86_USB_Serial-if00-port0"
   baudrate: 115200
   mqtt_server: "localhost"
   mqtt_port: 1883
